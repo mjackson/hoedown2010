@@ -18,7 +18,11 @@ require 'time'
 #
 grammar ApacheLog
   rule common-log-file
-    common-log-entry*
+    (common-log-entry*) {
+      def entries
+        matches
+      end
+    }
   end
 
   rule common-log-entry
@@ -36,6 +40,7 @@ grammar ApacheLog
       end
 
       def status
+        first(:'status-code').value
       end
 
       def size
@@ -93,10 +98,18 @@ grammar ApacheLog
   end
 
   rule status-code
-    digit 3*3
+    (digit 3*3) {
+      def value
+        text.to_i
+      end
+    }
   end
 
   rule response-size
-    digit+
+    digit+ {
+      def value
+        text.to_i
+      end
+    }
   end
 end

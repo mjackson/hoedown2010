@@ -7,6 +7,12 @@ if $0 == __FILE__
   require 'test/unit'
 
   class ApacheLogTest < Test::Unit::TestCase
+    def setup
+      @sample_data ||= DATA.read
+    end
+
+    attr_reader :sample_data
+
     def test_timestamp
       match = ApacheLog.parse('[18/Sep/2004:11:07:48 +1000]', :root => :timestamp)
       assert(match)
@@ -24,8 +30,16 @@ if $0 == __FILE__
     end
 
     def test_all
-      match = ApacheLog.parse(DATA.read)
+      match = ApacheLog.parse(sample_data)
       assert(match)
+      assert_equal(16, match.entries.length)
+
+      first_entry = match.entries.first
+
+      assert(first_entry)
+      assert_equal(Time.parse('10/Apr/2007 10:39:11 +0300'), first_entry.time)
+      assert_equal(500, first_entry.status)
+      assert_equal(606, first_entry.size)
     end
   end
 end
