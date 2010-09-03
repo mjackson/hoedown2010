@@ -8,6 +8,11 @@ if $0 == __FILE__
 
   class ApacheLogTest < Test::Unit::TestCase
     def setup
+      # In case you're not familiar with this technique, Ruby automatically
+      # populates the DATA constant with an IO object that points to the data
+      # found after the __END__ symbol. In this case, DATA.read will return the
+      # lines containing the sample log entries we want to test our parser
+      # against.
       @sample_data ||= DATA.read
     end
 
