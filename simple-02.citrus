@@ -1,0 +1,9 @@
+grammar Simple
+  rule paren_letter
+    '(' (paren_letter | letter) ')'
+  end
+
+  rule letter
+    [a-zA-Z]
+  end
+end

@@ -1,0 +1,5 @@
+grammar Simple
+  rule abc
+    "abc"
+  end
+end

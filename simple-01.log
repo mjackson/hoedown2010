@@ -1,0 +1,11 @@
+>> require 'citrus'
+ => true
+>> Citrus.load('match-01')
+ => [Simple]
+>> Simple.parse('abc')
+ => abc
+>> require 'citrus/debug'
+ => true
+>> Simple.parse('abc')
+ => <?xml version="1.0" encoding="UTF-8"?>
+<match names="abc" text="abc" offset="0"/>

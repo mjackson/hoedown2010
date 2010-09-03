@@ -1,0 +1,22 @@
+>> require 'citrus/debug'
+ => true
+>> Citrus.load('simple-02')
+ => [Simple]
+>> Simple.parse('(a)')
+ => <?xml version="1.0" encoding="UTF-8"?>
+<match names="paren_letter" text="(a)" offset="0">
+  <match names="" text="(" offset="0"/>
+  <match names="letter" text="a" offset="1"/>
+  <match names="" text=")" offset="2"/>
+</match>
+>> Simple.parse('((a))')
+ => <?xml version="1.0" encoding="UTF-8"?>
+<match names="paren_letter" text="((a))" offset="0">
+  <match names="" text="(" offset="0"/>
+  <match names="paren_letter" text="(a)" offset="1">
+    <match names="" text="(" offset="1"/>
+    <match names="letter" text="a" offset="2"/>
+    <match names="" text=")" offset="3"/>
+  </match>
+  <match names="" text=")" offset="4"/>
+</match>
