@@ -1,0 +1,102 @@
+require 'time'
+
+# A simple grammar for Apache log files in the common log format.
+#
+# Apache common log format is "%h %l %u %t \"%r\" %>s %b".
+#
+# %h   =  Client's IP address
+# %l   =  Client's RFC 1413 identity
+# %u   =  userid of the person requesting the document
+# %t   =  Time that the server finished processing the request
+# %r   =  HTTP request line
+# %>s  =  Response status code
+# %b   =  Size of the response
+#
+# Example:
+#
+# 66.249.64.13 - - [18/Sep/2004:11:07:48 +1000] "GET / HTTP/1.0" 200 6433
+#
+grammar ApacheLog
+  rule common-log-file
+    common-log-entry*
+  end
+
+  rule common-log-entry
+    ( ip-address ' '    # %h
+      identity ' '      # %l
+      userid ' '        # %u
+      timestamp ' '     # %t
+      http-request ' '  # %r
+      status-code ' '   # %>s
+      response-size     # %b
+      "\n"
+    ) {
+      def time
+        timestamp.value
+      end
+
+      def status
+      end
+
+      def size
+        first(:'response-size').value
+      end
+    }
+  end
+
+  rule ip-address
+    dec-octet '.' dec-octet '.' dec-octet '.' dec-octet
+  end
+
+  rule dec-octet
+      '25' [0-5]        # 250-255
+    | '2' [0-4] digit   # 200-249
+    | '1' digit digit   # 100-199
+    | [1-9] digit       # 10-99
+    | digit             # 0-9
+  end
+
+  rule digit
+    [0-9]
+  end
+
+  rule identity
+    /\S+/
+  end
+
+  rule userid
+    /\S+/
+  end
+
+  rule timestamp
+    ('[' (!']' .)* ']') {
+      # Returns only the portion of the timestamp string within the [].
+      def ts_string
+        # Each match object has a method called #matches that returns an array
+        # of all that match's submatches. In this case, the second submatch (at
+        # index 1) contains the text that comes in between the [].
+        matches[1].text
+      end
+
+      # Returns the time value of this timestamp.
+      def value
+        # Need to substitute first colon in order for Time#parse to work
+        # correctly (e.g. "18/Sep/2004:11:07:48 +1000" won't parse correctly but
+        # "18/Sep/2004 11:07:48 +1000" will.
+        Time.parse(ts_string.sub(':', ' '))
+      end
+    }
+  end
+
+  rule http-request
+    '"' (!'"' .)* '"'
+  end
+
+  rule status-code
+    digit 3*3
+  end
+
+  rule response-size
+    digit+
+  end
+end
