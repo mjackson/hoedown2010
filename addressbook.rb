@@ -24,6 +24,11 @@ if $0 == __FILE__
 
   class AddressBookTest < Test::Unit::TestCase
     def setup
+      # In case you're not familiar with this technique, Ruby automatically
+      # populates the DATA constant with an IO object that points to the data
+      # found after the __END__ symbol in this file. In this case, DATA.read
+      # will return the lines containing the sample data we want to test our
+      # parser against.
       @sample_data ||= DATA.read
     end
 
