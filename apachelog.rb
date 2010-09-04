@@ -40,8 +40,9 @@ if $0 == __FILE__
       assert_equal(16, match.entries.length)
 
       first_entry = match.entries.first
-
       assert(first_entry)
+
+      # Test to make sure the entry's attributes are set correctly.
       assert_equal(Time.parse('10/Apr/2007 10:39:11 +0300'), first_entry.time)
       assert_equal(500, first_entry.status)
       assert_equal(606, first_entry.size)
