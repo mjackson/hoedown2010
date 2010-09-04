@@ -1,0 +1,39 @@
+grammar AddressBook::Grammar
+  rule address_book
+    ('<contacts>' space contact* '</contacts>' space) {
+      def value
+        a = AddressBook.new
+        find(:contact).each {|c| a.contacts << c.value }
+        a
+      end
+    }
+  end
+
+  rule contact
+    ('<contact>' space full_name address phone '</contact>' space) {
+      def value
+        c = Contact.new
+        c.name = full_name.value
+        c.address = address.value
+        c.phone = phone.value
+        c
+      end
+    }
+  end
+
+  rule full_name
+    ('<name>' (!'<' .)* '</name>' space) <InnerText>
+  end
+
+  rule address
+    ('<address>' (!'<' .)* '</address>' space) <InnerText>
+  end
+
+  rule phone
+    ('<phone>' (!'<' .)* '</phone>' space) <InnerText>
+  end
+
+  rule space
+    [ \t\n]*
+  end
+end
